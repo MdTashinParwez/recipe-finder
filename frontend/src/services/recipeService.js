@@ -20,4 +20,16 @@ try {
 }
 };
 
+
+export const getRecipeById = async(id) =>{
+    try {
+       const response = await recipeApi.get(`/lookup.php?i=${id}`);
+       
+       return response.data.meals  ? response.data.meals[0] : null; 
+    } catch (error) {
+        console.error(`Error fetching recipe with id ${id}:`, error);
+        return null;
+    }
+}
+
 // export default recipeApi;
