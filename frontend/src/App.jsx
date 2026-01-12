@@ -2,6 +2,8 @@ import React, { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import RecipePage from './pages/RecipePage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
 function App() {
 
@@ -12,6 +14,9 @@ function App() {
       <Routes>
         <Route path='/' element={<HomePage/>} />
         <Route path='/recipe/:recipeId' element={<RecipePage/>} />
+        <Route path ='/login' element={<LoginPage/>} />
+        <Route path ='/register' element={<RegisterPage/>} />
+
 
         
       </Routes>
