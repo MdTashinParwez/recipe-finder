@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { register } from '../services/authService';
 
 function RegisterPage() {
     const [ formData, setFormData] = useState({
@@ -6,21 +7,38 @@ function RegisterPage() {
         email: '',
         password: '',
     });
+
+     const [error, setError] = useState(null);
+
     const handleChange = (e) => {
+      if(error) setError(null);
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
     };
 
-    const handleSubmit = (e) => {   
+    const handleSubmit = async (e) => {   
         e.preventDefault();
-        console.log('Form Data Submitted:', formData);
+        setError(null);
+
+        // Registration logic will go here
+        try {
+          const data = await register(formData);
+          console.log('Registration successful! and now you can log in.', data);
+       
+        } catch (error) {
+          console.error(error);
+          setError(error.message || 'An Unexpected Error Occurred, Please Try Again Later ! Thanks for your patience ☺️. ');
+          
+        }
     };
   return (
     <div className="auth-container">
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Create an Account</h2>
+        
+         {error && <p className="error-message">{error}</p>}
         
         <div className="form-group">
           <label htmlFor="name">Name</label>
