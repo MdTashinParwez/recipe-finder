@@ -26,6 +26,11 @@ function RegisterPage() {
         try {
           const data = await register(formData);
           console.log('Registration successful! and now you can log in.', data);
+
+          if(data.token){
+            localStorage.setItem('token',data.token);
+            console.log('Token saved to localStorage after registration')
+          }
        
         } catch (error) {
           console.error(error);
@@ -37,7 +42,7 @@ function RegisterPage() {
     <div className="auth-container">
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Create an Account</h2>
-        
+
          {error && <p className="error-message">{error}</p>}
         
         <div className="form-group">

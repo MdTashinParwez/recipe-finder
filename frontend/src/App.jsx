@@ -4,13 +4,15 @@ import HomePage from './pages/HomePage'
 import RecipePage from './pages/RecipePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import Navbar from './components/Navbar'
 
 function App() {
 
   return (
     <div>
+      <Navbar/>
      
-
+      
       <Routes>
         <Route path='/' element={<HomePage/>} />
         <Route path='/recipe/:recipeId' element={<RecipePage/>} />
@@ -20,6 +22,7 @@ function App() {
 
         
       </Routes>
+     
     </div>
   )
 }
