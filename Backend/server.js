@@ -5,6 +5,10 @@ const express = require('express');
 const colors = require('colors');
 const cors = require('cors');
 const connectDB = require('./config/db')
+const userRoutes = require('./routes/userRoutes');
+const favoriteRoutes = require('./routes/favoriteRoutes');
+
+
 
 connectDB();
 
@@ -21,6 +25,8 @@ app.use(express.json());
 // ROUTES
 
 app.use('/api/users',require('./routes/userRoutes'));
+app.use('/api/favorites', require('./routes/favoriteRoutes'));
+
 
 
 
