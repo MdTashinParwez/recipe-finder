@@ -10,14 +10,27 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Email is required'],
-        unique: true
+        unique: true,
+         match: [
+            /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+            'Please provide a valid email',
+            ],
+
         },
     
     password: {
             type: String,
-            required: [true, 'Password is required']
-        }, 
-         },{ timestamps: true }
+            required: [true, 'Password is required'],
+            minlength: 6,
+        },
+        
+        favorites: {
+            type: [String],
+            default: [],
+        },
+         },
+
+         { timestamps: true }
 );
 
 // hasing password before saving the user 
