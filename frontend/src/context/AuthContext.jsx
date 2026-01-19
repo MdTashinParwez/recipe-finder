@@ -1,7 +1,10 @@
+ // use of this  
+ // we need to find in the all over app that is user is logged in or not so we need this 
+ 
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import {useNavigate} from 'react-router-dom';
-
-
+ 
 const parseJwt = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -10,16 +13,26 @@ const parseJwt = (token) => {
   }
 };
 
+// global box 
 export const AuthContext = createContext(null);
+
+// export const  AutContext = createContext(null);
+// export const useAuth = () =>{
+// return useContext(AuthContext)
+// 
+
 export const useAuth = () =>{
     return useContext(AuthContext);
 }
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-
+  // login data
+  const [user, setUser] = useState(null); // user = null=>logged Out , user = object=> loggedin 
+// token checking 
   const [loading, setLoading] = useState(true);
+  
    const navigate = useNavigate();
+   
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {

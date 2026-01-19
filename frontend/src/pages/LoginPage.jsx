@@ -13,7 +13,9 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-
+// also we can write const {login } = useAuth();
+ // we already export in the global context by the name of useAuth 
+ 
   const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
