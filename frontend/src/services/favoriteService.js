@@ -47,3 +47,29 @@ export const getFavorites = async() =>{
         throw error.response.data || new Error('Failed to fetch favorites.');
     }
 };
+
+
+export const removeFavorite = async(recipeId) =>{
+    const token = localStorage.getItem('token');
+    // jwt retrive
+    if(!token ){
+        throw new Error('Authentication token not found');
+
+    }
+
+    //axios config
+
+    const config = {
+        headers: {
+            Authorization:  `Bearer ${token}`,
+        },
+    };
+
+    try{
+        const response = await axios.delete(`${API_URL}/${recipeId}`, config);
+        return response.data;
+    }catch(error){
+        throw error.response.data || new Error('Failed to remove favorite..');
+    }
+};
+
