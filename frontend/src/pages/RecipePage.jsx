@@ -127,7 +127,8 @@ import { useParams } from 'react-router-dom';
 import { getRecipeById } from '../services/recipeService';
 import { AuthContext } from '../context/AuthContext';
 import { addFavorite } from '../services/favoriteService'; // Our new service function!
-// import './RecipePage.css';
+import LoadingSpinner from '../components/LoadingSpinner';
+
 
 const RecipePage = () => {
   const { recipeId } = useParams();
@@ -173,8 +174,10 @@ const RecipePage = () => {
     }
   };
 
-  if (loading) return <div className="loading-state">Loading recipe...</div>;
-  if (!recipe) return <div className="not-found-state">Recipe not found.</div>;
+  // if (loading) return <div className="loading-state">Loading recipe...</div>;
+  // if (!recipe) return <div className="not-found-state">Recipe not found.</div>;
+   if (loading) return <LoadingSpinner />;
+   if (!recipe) return <Typography>Recipe not found.</Typography>;
 
   // Helper to extract ingredients (no changes here)
   const getIngredients = () => {

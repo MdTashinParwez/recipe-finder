@@ -64,6 +64,7 @@ import { getFavorites, removeFavorite } from '../services/favoriteService';
 import { getRecipeById } from '../services/recipeService'; 
 import RecipeCard from '../components/RecipeCard';
 import './FavoritesPage.css';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const FavoritesPage = () => {
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
@@ -113,8 +114,17 @@ const FavoritesPage = () => {
     }
   }
 
+  // if (loading) {
+  //   return <div className="favorites-status">Loading your favorite recipes...</div>;
+  // }
+
+  // if (error) {
+  //   return <div className="favorites-status error">{error}</div>;
+  // }
+
+  
   if (loading) {
-    return <div className="favorites-status">Loading your favorite recipes...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {
@@ -124,6 +134,7 @@ const FavoritesPage = () => {
   return (
     <div className="favorites-page-container">
       <h1>My Favorite Recipes</h1>
+      
       
       {favoriteRecipes.length === 0 ? (
         <p>You haven't saved any favorite recipes yet. Start exploring!</p>

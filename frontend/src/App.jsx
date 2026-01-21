@@ -7,11 +7,15 @@ import RegisterPage from './pages/RegisterPage'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute';
 import FavoritesPage from './pages/FavoritesPage';
+import NotFoundPage from './pages/NotFoundPage';
+import Footer from './components/Footer';
+
+
 
 function App() {
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col" >
       <Navbar/>
      
       
@@ -28,9 +32,13 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route path="*" element={<NotFoundPage />} />
+
+
 
         
       </Routes>
+      <Footer />
      
     </div>
   )
