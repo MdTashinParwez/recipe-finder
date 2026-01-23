@@ -24,10 +24,19 @@ const userSchema = new mongoose.Schema({
             minlength: 6,
         },
         
-        favorites: {
-            type: [String],
-            default: [],
-        },
+        favorites: [
+            {
+                recipeId: {
+                    type: String,
+                    required: true,
+                },
+
+                notes:{
+                    type: String,
+                    default: '',
+                }
+            }
+        ],
          },
 
          { timestamps: true }
