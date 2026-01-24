@@ -5,6 +5,67 @@ const asyncHandler = require("express-async-handler");
 
 const router = express.Router();
 
+router.post('/', protect, async (req, res) => {
+  try {
+    const {recipeId} = req.body;
+    const user = await User.findById(req.user.id).select('+favorites');
+    
+
+    if(!user){
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isAlreadyFavorite = user.favorites.some(
+      (favorite) => favorite.recipeId === recipeId
+    );
+     if (isAlreadyFavorite) {
+      return res.status(400).json({ message: 'Recipe is already in favorites' });
+    }
+      user.favorites.push({ recipeId });
+      await user.save();
+
+     res.status(201).json({
+      message: 'Recipe added to favorites successfully',
+      favorites: user.favorites, // Return the updated list
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error ( for dev: route isfavorite) ' });
+  }
+})
+
+router.put('/:recipeId', protect , async (req,res) =>{
+  try {
+    const {recipeId} = req.params;
+    const {notes} = req.body;
+
+    if(notes === undefined){
+      return res.status(400).json({message: 'Notes field is required'});
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      {_id: req.user.id, 'favorites.recipeId': recipeId},
+      { $set: {'favorites.$.notes': notes }},
+      {new: true}
+    );
+     if (!updatedUser) {
+      return res.status(404).json({ message: 'Favorite recipe not found for this user.' });
+    }
+        res.status(200).json({
+      message: 'Notes updated successfully',
+      favorites: updatedUser.favorites,
+    });
+
+
+    
+
+    
+  } catch (error) {
+     console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+})
+
 const getFavorites = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
