@@ -8,6 +8,11 @@ const router = express.Router();
 router.post('/', protect, async (req, res) => {
   try {
     const {recipeId} = req.body;
+
+      if (!recipeId) {
+      return res.status(400).json({ message: 'recipeId is required' });
+    }
+
     const user = await User.findById(req.user.id).select('+favorites');
     
 
@@ -16,7 +21,8 @@ router.post('/', protect, async (req, res) => {
     }
 
     const isAlreadyFavorite = user.favorites.some(
-      (favorite) => favorite.recipeId === recipeId
+      (favorite) => favorite.recipeId.toString() === recipeId.toString()
+
     );
      if (isAlreadyFavorite) {
       return res.status(400).json({ message: 'Recipe is already in favorites' });
@@ -48,6 +54,8 @@ router.put('/:recipeId', protect , async (req,res) =>{
       { $set: {'favorites.$.notes': notes }},
       {new: true}
     );
+
+    
      if (!updatedUser) {
       return res.status(404).json({ message: 'Favorite recipe not found for this user.' });
     }
