@@ -1,196 +1,176 @@
 import React, { useState, useEffect } from 'react';
-import { getFavorites, removeFavorite } from '../services/favoriteService';
-import { getRecipeById } from '../services/recipeService'; 
+import { getFavorites, removeFavorite, updateFavoriteNote } from '../services/favoriteService';
+import { getRecipeById } from '../services/recipeService';
 import RecipeCard from '../components/RecipeCard';
-import './FavoritesPage.css';
 import LoadingSpinner from '../components/LoadingSpinner';
+import NotesEditModal from '../components/NotesEditModal';
 
 const FavoritesPage = () => {
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  
-  // useEffect(() => {
-  //   const fetchFavorites = async () => {
-  //     try {
-  //       setLoading(true);
-  //       setError(null);
-        
-  //       const ids = await getFavorites();
-  //       if (ids.length === 0) {
-  //         setLoading(false);
-  //         return;
-  //       }
-  //       const recipePromises = ids.map(id => getRecipeById(id));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  //       const recipes = await Promise.all(recipePromises);
-        
-  //       setFavoriteRecipes(recipes);
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        setLoading(true);
+        const favoriteObjects = await getFavorites();
 
-  //     } catch (err) {
-  //       setError(err.message || 'An error occurred while fetching your favorites.');
-  //     } finally {
-  //       // 6. No matter what, we are done loading.
-  //       setLoading(false);
-  //     }
-  //   };
+        if (favoriteObjects.length === 0) {
+          setFavoriteRecipes([]);
+          return;
+        }
 
-  //   fetchFavorites();
-  // }, []); 
-
-  // new one
-
-  // useEffect(() =>{
-  //   const fetchAndProcessFavorites = async() =>{
-  //     try {
-  //       setLoading(true);
-  //       setError(null);
-
-  //       const favoriteObjects = await getFavorites();
-
-  //       if(favoriteObjects.length === 0){
-  //         setFavoriteRecipes([]);
-  //         setLoading(false);
-  //         return;
-  //       }
-
-  //       const recipeIds = favoriteObjects.map(fav => fav.recipeId);
-        
-  //       const recipeDetailPromises = recipeIds.map(id =>
-  //       getRecipeById(id)
-  //       );
-
-  //       const fetchedRecipeDetails = await Promise.all(recipeDetailPromises);
-
-  //       const combinedFavorites = fetchedRecipeDetails.map(recipe => {
-  //         const userFavoriteData = favoriteObjects.find(fav => fav.recipeId === recipe.idMeal);
-  //       })
-
-  //       return{
-  //         ...recipe,
-  //         notes: userFavoriteData ? userFavoriteData.notes : '',
-  //       } 
-
-  //       setFavoriteRecipes(combinedFavorites);
-  //     } catch (error) {
-  //               setError(error.message || 'An error occurred while fetching your favorites.');
-
-  //     }
-  //     finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //       fetchAndProcessFavorites();
-
-  // },[]);
-
-useEffect(() => {
-  const fetchAndProcessFavorites = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const favoriteObjects = await getFavorites();
-
-      if (favoriteObjects.length === 0) {
-        setFavoriteRecipes([]);
-        return;
-      }
-      const recipeIds = favoriteObjects.map(fav => fav.recipeId);
-
-      // ✅ STEP 2: Promises banao (MISSING PART)
-      const recipeDetailPromises = recipeIds.map(id =>
-        getRecipeById(id)
-      );
-
-      // ✅ STEP 3: Fetch all recipes
-      const fetchedRecipeDetails = await Promise.all(recipeDetailPromises);
-
-      // ✅ STEP 4: Combine recipe + notes
-      const combinedFavorites = fetchedRecipeDetails.map(recipe => {
-        const userFavoriteData = favoriteObjects.find(
-          fav => fav.recipeId === recipe.idMeal
+        const recipes = await Promise.all(
+          favoriteObjects.map(fav => getRecipeById(fav.recipeId))
         );
 
-        return {
-          ...recipe,
-          notes: userFavoriteData ? userFavoriteData.notes : '',
-        };
-      });
+        const combined = recipes.map(recipe => {
+          const fav = favoriteObjects.find(
+            f => f.recipeId === recipe.idMeal
+          );
 
-      setFavoriteRecipes(combinedFavorites);
+          return {
+            ...recipe,
+            notes: fav?.notes || '',
+          };
+        });
 
-    } catch (error) {
-      setError(error.message || 'An error occurred while fetching your favorites.');
-    } finally {
-      setLoading(false);
-    }
+        setFavoriteRecipes(combined);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavorites();
+  }, []);
+
+  const handleRemoveFavorite = async (id) => {
+    await removeFavorite(id);
+    setFavoriteRecipes(prev =>
+      prev.filter(r => r.idMeal !== id)
+    );
   };
-  fetchAndProcessFavorites();
-}, []);
 
+  const handleOpenModal = (recipe) => {
+    setSelectedRecipe(recipe);
+    setIsModalOpen(true);
+  };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedRecipe(null);
+  };
 
-  const handleRemoveFavorite  = async(recipeId) =>{
+  const handleSaveNotes = async (recipeId, newNotes) => {
     try {
-      await removeFavorite(recipeId);
-       setFavoriteRecipes((prevRecipes) =>
-        prevRecipes.filter((recipe) => recipe.idMeal !== recipeId)
+      await updateFavoriteNote(recipeId, newNotes);
+
+      setFavoriteRecipes(prev =>
+        prev.map(recipe =>
+          recipe.idMeal === recipeId
+            ? { ...recipe, notes: newNotes }
+            : recipe
+        )
       );
+
+      handleCloseModal();
     } catch (err) {
-      console.error('Failed to remove favorite:', err);
-      alert(err.message || 'Could not remove favorite. Please try again.');
-      
+      alert(err.message || 'Failed to save notes');
     }
   };
 
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error) {
-    return <div className="favorites-status error">{error}</div>;
-  }
-
+  if (loading) return <LoadingSpinner />;
+  if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="favorites-page-container">
-      <h1>My Favorite Recipes</h1>
-      
-      
-      {favoriteRecipes.length === 0 ? (
-        <p>You haven't saved any favorite recipes yet. Start exploring!</p>
-      ) : (
-        <div className="recipe-grid">
-          {favoriteRecipes.map(recipe => (
-          
-            <div key={recipe.idMeal} className="favorite-card-container">
-              <RecipeCard recipe={recipe} />
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-yellow-50 px-6 py-10">
 
-               <div className="recipe-notes">
-                <h4>My Notes:</h4>
+       
+        <h1 className="text-4xl font-extrabold text-center mb-12">
+          🍽️ My Favorite Recipes
+        </h1>
 
-                {recipe.notes ? (
-                  <p className="notes-text">{recipe.notes}</p>
-                ) : (
-                  <p className="notes-empty">No notes yet.</p>
-                )}
-              </div>
-              <button 
-                onClick={() => handleRemoveFavorite(recipe.idMeal)}
-                className="remove-button"
+        {favoriteRecipes.length === 0 ? (
+          <div className="text-center text-gray-500 text-lg">
+            No favorites yet 😢 <br />
+            <span className="text-sm">Start exploring delicious recipes!</span>
+          </div>
+        ) : (
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+            {favoriteRecipes.map(recipe => (
+              <div
+                key={recipe.idMeal}
+                className="group bg-white/80 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden"
               >
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
+
+             
+                <div className="overflow-hidden">
+                  <RecipeCard recipe={recipe} />
+                </div>
+
+            
+                <div className="p-4">
+
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="text-sm font-semibold text-gray-700">
+                      📝 Notes
+                    </h4>
+
+                    <button
+                      onClick={() => handleOpenModal(recipe)}
+                      className="text-xs px-3 py-1 rounded-full bg-orange-100 text-orange-600 hover:bg-orange-200 transition"
+                    >
+                      ✏️ Edit
+                    </button>
+                  </div>
+
+                  <div className="bg-gray-50 p-3 rounded-lg min-h-[60px]">
+                    {recipe.notes ? (
+                      <p className="text-sm text-gray-600 italic">
+                        "{recipe.notes}"
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic">
+                        No notes yet...
+                      </p>
+                    )}
+                  </div>
+
+               
+                  <button
+                    onClick={() => handleRemoveFavorite(recipe.idMeal)}
+                    className="mt-4 w-full py-2 rounded-xl bg-gradient-to-r from-red-400 to-red-500 text-white text-sm font-medium hover:scale-105 transition"
+                  >
+                    ❌ Remove
+                  </button>
+
+                </div>
+              </div>
+            ))}
+
+          </div>
+        )}
+      </div>
+
+     
+      {selectedRecipe && (
+        <NotesEditModal
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          recipe={selectedRecipe}
+          onSave={handleSaveNotes}
+        />
       )}
-    </div>
+    </>
   );
 };
 

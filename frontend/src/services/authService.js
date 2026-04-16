@@ -5,9 +5,10 @@ const API_URL =  import.meta.env.VITE_BACKEND_API_URL + '/api/users';
 export const register = async(userData) =>{
     try {
         const  response = await axios.post(`${API_URL}/register`, userData);
+        return response.data;
     } catch (error) {
-        console.error('Registration failed:', error.response.data);
-        throw error.response.data;
+        console.error('Registration failed:', error.response?.data);
+        throw error.response?.data || error.message;
         
     }
 }

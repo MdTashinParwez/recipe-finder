@@ -6,9 +6,6 @@ const recipeApi = axios.create({
 });
 
 
-// @param{string}
-// @return{promise<arra>}
-
 export const searchRecipes = async(query) =>{
 
 try {
@@ -32,4 +29,3 @@ export const getRecipeById = async(id) =>{
     }
 }
 
-// export default recipeApi;

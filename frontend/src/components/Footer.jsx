@@ -20,7 +20,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              🍳 RecipeHub
+              🍳 Delishia
             </h2>
             <p className="mt-4 text-sm leading-relaxed">
               Discover, create, and share amazing recipes with our
@@ -66,7 +66,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="text-orange-400 mt-1" />
-                123 Recipe Street, Food City, FC 12345
+                123 Delishia Street, Food City, FC 12345
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={16} className="text-orange-400" />
@@ -74,7 +74,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={16} className="text-orange-400" />
-                hello@recipehub.com
+                hello@Delishia.com
               </li>
             </ul>
           </div>
@@ -82,7 +82,7 @@ const Footer = () => {
 
         {/* Divider */}
         <div className="border-t border-gray-700 mt-10 pt-6 text-center text-sm">
-          © {new Date().getFullYear()} RecipeHub. All rights reserved.  
+          © {new Date().getFullYear()} Delishia. All rights reserved.  
           <span className="block mt-1">
             Created by <span className="text-white font-medium">Tashin</span>
           </span>

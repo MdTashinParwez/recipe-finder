@@ -9,16 +9,22 @@ import ProtectedRoute from './components/ProtectedRoute';
 import FavoritesPage from './pages/FavoritesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import Footer from './components/Footer';
+import { useLocation } from "react-router-dom";
+import ScrollToTop from './components/ScrollTotTop';
 
 
 
 function App() {
+    const hideLayoutRoutes = ["/login", "/register"];
+
+    const location = useLocation();
+    const hideLayout = hideLayoutRoutes.includes(location.pathname);
 
   return (
     <div className="min-h-screen flex flex-col" >
-      <Navbar/>
+      {!hideLayout && <Navbar />}
      
-      
+       <ScrollToTop />
       <Routes>
         <Route path='/' element={<HomePage/>} />
         <Route path='/recipe/:recipeId' element={<RecipePage/>} />
@@ -38,7 +44,7 @@ function App() {
 
         
       </Routes>
-      <Footer />
+      {!hideLayout && <Footer />}
      
     </div>
   )

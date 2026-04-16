@@ -1,207 +1,130 @@
-// import React, { useState } from "react";
-// import SearchBar from "../components/SearchBar";
-// import { searchRecipes } from "../services/recipeService";
-// import RecipeCard from "../components/RecipeCard";
-
-// const heroImage =
-//   "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1470&q=80";
-
-// const HomePage = () => {
-//   const [recipes, setRecipes] = useState([]);
-//   const [searched, setSearched] = useState(false);
-
-//   const handleSearch = async (query) => {
-//     const results = await searchRecipes(query);
-//     setRecipes(results);
-//     setSearched(true);
-//   };
-
-//   return (
-//     <div className="bg-gray-50 min-h-screen">
-//       {/* Hero */}
-//       <div
-//         className="relative w-full h-96 sm:h-[28rem] md:h-[32rem] flex items-center justify-center"
-//         style={{
-//           backgroundImage: `url(${heroImage})`,
-//           backgroundSize: "cover",
-//           backgroundPosition: "center",
-//         }}
-//       >
-//         {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
-//         <div className="relative z-10 text-center px-4">
-//           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white drop-shadow-lg">
-//             Find Your Favorite Recipes
-//           </h1>
-//           <p className="mt-4 text-lg sm:text-xl md:text-2xl text-white drop-shadow-md">
-//             Explore thousands of delicious meals from around the world
-//           </p>
-//           <div className="mt-6">
-//             <SearchBar onSearch={handleSearch} />
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Recipes Grid */}
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-//         {recipes.length > 0 && (
-//           <h2 className="text-3xl font-bold text-gray-800 mb-6">
-//             Search Results
-//           </h2>
-//         )}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-//           {recipes.map((recipe) => (
-//             <RecipeCard key={recipe.idMeal} recipe={recipe} />
-//           ))}
-//         </div>
-
-//         {searched && recipes.length === 0 && (
-//           <p className="mt-12 text-center text-lg text-gray-500">
-//             No recipes found. Please try a different search term!
-//           </p>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default HomePage;
-import React, { useState,useEffect,useRef  } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SearchBar from "../components/SearchBar";
 import { searchRecipes } from "../services/recipeService";
 import RecipeCard from "../components/RecipeCard";
-import { Container, Grid } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
-// import LoadingSpinner from '../components/LoadingSpinner';
-
 
 const heroImage =
   "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80";
-
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [searched, setSearched] = useState(false);
   const [queryText, setQueryText] = useState("");
+
   const [searchParams, setSearchParams] = useSearchParams();
   const resultsRef = useRef(null);
-  // const [loading, setLoading] = useState(false);
+
+  
   useEffect(() => {
-  const query = searchParams.get("search");
-  if (query) {
-    handleSearch(query, false); // false = no scroll
-  }
-}, []);
+    const query = searchParams.get("search");
+    if (query) {
+      handleSearch(query, false);
+    }
+  }, []);
 
-  // const handleSearch = async (query) => {
-  //   setQueryText(query);
-  //   const results = await searchRecipes(query);
-  //   setRecipes(results);
-  //   setSearched(true);
-
-  //   // Smooth scroll to results
-  //   setTimeout(() => {
-  //     window.scrollTo({
-  //       top: 350,
-  //       behavior: "smooth",
-  //     });
-  //   }, 200);
-  // };
+  
   const handleSearch = async (query, shouldScroll = true) => {
-  setQueryText(query);
-  setSearchParams({ search: query });
+    setQueryText(query);
+    setSearchParams({ search: query });
 
-  // setLoading(true);
-  const results = await searchRecipes(query);
-  setRecipes(results || []);
-  setSearched(true);
-      // setLoading(false);
+    const results = await searchRecipes(query);
+    setRecipes(results || []);
+    setSearched(true);
 
-
-  setTimeout(() => {
-    resultsRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, 200);
-};
-
+    if (shouldScroll) {
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }, 200);
+    }
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* ================= HERO SECTION ================= */}
-      {/* Hero Section */}
-<div
-  className="relative w-full min-h-[75vh] flex items-center justify-center"
-  style={{
-    backgroundImage: `url(${heroImage})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }}
->
-  {/* Dark Overlay */}
-  <div className="absolute inset-0 bg-black/60"></div>
 
-  {/* Content */}
-  <div className="relative z-10 max-w-3xl text-center px-6">
-    <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight">
-      Discover Delicious Recipes, Instantly
-    </h1>
+      <div
+        className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-orange-900/40"></div>
 
-    <p className="mt-4 text-lg sm:text-xl text-gray-200">
-      Search your favorite meals, save them, and cook like a pro — all in one place.
-    </p>
+        <div className="absolute w-[500px] h-[500px] bg-orange-500/20 blur-3xl rounded-full top-[-100px] left-[-100px]"></div>
+        <div className="absolute w-[400px] h-[400px] bg-pink-500/20 blur-3xl rounded-full bottom-[-100px] right-[-100px]"></div>
 
-    <div className="mt-8">
-      {/* SearchBar yahin rahega */}
-      <SearchBar onSearch={handleSearch} />
-    </div>
-  </div>
-</div>
+        <div className="relative z-10 max-w-3xl text-center px-6">
+          
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white leading-tight">
+            🍔 Find Your Next
+            <span className="block text-orange-400">Favorite Meal</span>
+          </h1>
 
+          <p className="mt-5 text-lg text-gray-200">
+            Search, save & cook delicious recipes with a vibe ✨
+          </p>
 
-      {/* ================= SEARCH FEEDBACK ================= */}
+          <div className="mt-8">
+            <SearchBar onSearch={handleSearch} />
+          </div>
+
+          <div className="flex justify-center gap-3 mt-6 flex-wrap">
+            {["🍕 Pizza", "🍜 Noodles", "🍰 Dessert", "🥗 Healthy"].map(tag => (
+              <span
+                key={tag}
+                className="bg-white/10 text-white px-3 py-1 rounded-full text-sm backdrop-blur"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {searched && (
-        <div ref={resultsRef} className="max-w-7xl mx-auto px-4 mt-10">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Search Results
-            {queryText && ` for "${queryText}"`}
-            {recipes.length > 0 && ` (${recipes.length})`}
+        <div ref={resultsRef} className="max-w-7xl mx-auto px-4 mt-14">
+          <h2 className="text-3xl font-bold text-gray-800">
+            🔍 Results for{" "}
+            <span className="text-orange-500">"{queryText}"</span>
           </h2>
+
           <p className="text-gray-500 mt-1">
-            Showing recipes matching your search
+            {recipes.length} recipes found 🍽️
           </p>
         </div>
       )}
 
-      {/* ================= RECIPES GRID ================= */}
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
-        <Grid container spacing={4}>
+      <div className="max-w-7xl mx-auto px-4 mt-10 pb-16">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
           {recipes.map((recipe) => (
-            <Grid
-              item
+            <div
               key={recipe.idMeal}
-              xs={12}
-              sm={6}
-              md={4}
-              lg={3}
+              className="transform hover:scale-105 transition duration-300"
             >
               <RecipeCard recipe={recipe} />
-            </Grid>
+            </div>
           ))}
-        </Grid>
 
-        {/* ================= EMPTY STATE ================= */}
+        </div>
+
         {searched && recipes.length === 0 && (
           <div className="text-center mt-20">
-            <p className="text-2xl font-semibold text-gray-700">
-              😕 No recipes found
+            <p className="text-4xl">😕🍜</p>
+            <p className="text-xl font-semibold text-gray-700 mt-3">
+              No recipes found
             </p>
             <p className="text-gray-500 mt-2">
-              Try searching with a different keyword
+              Try searching "chicken", "pasta", or "cake"
             </p>
           </div>
         )}
-      </Container>
+      </div>
+
     </div>
   );
 };

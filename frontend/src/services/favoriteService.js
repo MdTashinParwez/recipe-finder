@@ -2,6 +2,30 @@ import axios  from "axios";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_API_URL}/api/favorites`;
 
+export const updateFavoriteNote = async (recipeId, notes) => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    throw new Error('No token found. Please login again.');
+  }
+
+  try {
+    const res = await axios.put(
+      `${API_URL}/${recipeId}`,
+      { notes }, // body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || new Error('Failed to update note');
+  }
+};
+
 export const addFavorite = async(recipeId) =>{
 
     const token = localStorage.getItem('token');
@@ -22,7 +46,7 @@ export const addFavorite = async(recipeId) =>{
         throw error.response.data || new Error('An unknown error occurred ! ( for devloper: [favoriteService]).');
 
   }
-}
+};
 
 export const getFavorites = async() =>{
     const token = localStorage.getItem('token');
