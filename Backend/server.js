@@ -21,6 +21,9 @@ app.use(express.json());
 
 
 // ROUTES
+app.get("/", (req, res) => {
+  res.send("Backend working");
+});
 
 app.use('/api/users',require('./routes/userRoutes'));
 app.use('/api/favorites', require('./routes/favoriteRoutes'));
