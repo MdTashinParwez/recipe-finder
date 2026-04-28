@@ -140,6 +140,7 @@ RECIPE FINDER/
 
 ```bash
 POST /api/users/register
+```
 ````
 
 * **New user registration**
